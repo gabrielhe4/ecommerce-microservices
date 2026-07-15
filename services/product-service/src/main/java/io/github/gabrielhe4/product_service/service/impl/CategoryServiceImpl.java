@@ -1,5 +1,7 @@
 package io.github.gabrielhe4.product_service.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import io.github.gabrielhe4.product_service.dto.CategoryRequest;
@@ -42,6 +44,22 @@ public class CategoryServiceImpl implements CategoryService {
 
         return CategoryResponse.from(existingCategory);
 
+    }
+
+    @Override
+    public Page<CategoryResponse> findAll(Pageable pageable) {
+        Page<Category> categories = categoryRepository.findAll(pageable);
+
+        return categories.map(CategoryResponse::from);
+
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        Category existingCategory = categoryRepository.findById(id).orElseThrow(
+            () -> new CategoryNotFoundException(id));
+            
+        categoryRepository.delete(existingCategory);
     }
 
 }
