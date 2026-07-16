@@ -2,11 +2,14 @@ package io.github.gabrielhe4.product_service.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.github.gabrielhe4.product_service.dto.ProductRequest;
 import io.github.gabrielhe4.product_service.dto.ProductResponse;
 import io.github.gabrielhe4.product_service.service.ProductService;
 import jakarta.validation.Valid;
+
+import java.io.IOException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -47,9 +50,10 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<Page<ProductResponse>> findAllProducts (
         @RequestParam(required = false) String search,
+        @RequestParam(required = false) Long categoryId,
         @PageableDefault(size = 10, page = 0, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        var response = productService.findAll(search, pageable);
+        var response = productService.findAll(search, categoryId, pageable);
 
         return ResponseEntity.ok(response);
     }
@@ -79,6 +83,17 @@ public class ProductController {
         
         return ResponseEntity.ok(response);
         
+    }
+
+    @PutMapping("products/{id}/image")
+    public ResponseEntity<ProductResponse> updateProductImage(
+        @PathVariable Long id, 
+        @RequestParam("image") MultipartFile image
+    ) throws IOException {
+        
+        var response = productService.updateImage(id, image);
+        
+        return ResponseEntity.ok(response);
     }
     
     

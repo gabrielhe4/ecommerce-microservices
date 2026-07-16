@@ -1,8 +1,11 @@
 package io.github.gabrielhe4.product_service.service.impl;
 
+import java.io.IOException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.github.gabrielhe4.product_service.dto.ProductRequest;
 import io.github.gabrielhe4.product_service.dto.ProductResponse;
@@ -12,6 +15,7 @@ import io.github.gabrielhe4.product_service.model.Category;
 import io.github.gabrielhe4.product_service.model.Product;
 import io.github.gabrielhe4.product_service.repository.CategoryRepository;
 import io.github.gabrielhe4.product_service.repository.ProductRepository;
+import io.github.gabrielhe4.product_service.service.FileService;
 import io.github.gabrielhe4.product_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final FileService fileService;
 
     @Override
     public ProductResponse create(ProductRequest request) {
@@ -41,11 +46,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAll(String search, Pageable pageable) {
+    public Page<ProductResponse> findAll(String search,  Long categoryId, Pageable pageable) {
         Page<Product> page;
 
-        if (search != null && !search.isEmpty()) {
+        if (search != null)
             page = productRepository.searchByNameContainingIgnoreCase(search, pageable);
+
+        if (categoryId != null) {
+            
+            Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+
+            page = productRepository.findByCategory(category, pageable);
+
         } else {
             page = productRepository.findAll(pageable);
         }
@@ -93,6 +106,33 @@ public class ProductServiceImpl implements ProductService {
         return ProductResponse.from(
             productRepository.save(product)
         );
+    }
+
+    @Override
+    public ProductResponse updateImage(Long id, MultipartFile image) throws IOException {
+        
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ProductNotFoundException(id));
+
+        // TODO fix url path
+        String fileName = fileService.uploadImage(null, image);
+
+        Product updatedProduct = productRepository.save(product);
+        updatedProduct.setImageUrl(fileName);
+        
+        return ProductResponse.from(updatedProduct);
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ProductNotFoundException(id));
+
+        // TODO remove image from path
+
+        productRepository.delete(product);
+
     }
 
 }
