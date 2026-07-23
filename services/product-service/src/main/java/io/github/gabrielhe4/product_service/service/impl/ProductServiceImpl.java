@@ -2,6 +2,8 @@ package io.github.gabrielhe4.product_service.service.impl;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,12 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final FileService fileService;
 
+    private static Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     @Override
     public ProductResponse create(ProductRequest request) {
+        log.info("Creating new product...");
+
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new CategoryNotFoundException(request.categoryId()));
 
@@ -37,16 +43,18 @@ public class ProductServiceImpl implements ProductService {
                                 .sku(request.sku())
                                 .description(request.description())
                                 .price(request.price())
+                                .imageUrl("default-image.jpg")
                                 .category(category)
                                 .build();
         
-        return ProductResponse.from(
-            productRepository.save(newProduct)
-        );
+        newProduct = productRepository.save(newProduct);
+        log.info("New product was created with ID: {}", newProduct.getId());
+        return ProductResponse.from(newProduct);
     }
 
     @Override
     public Page<ProductResponse> findAll(String search,  Long categoryId, Pageable pageable) {
+        log.info("Fetching all products with pagination...");
         Page<Product> page;
 
         if (search != null)
@@ -68,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse findById(Long id) {
+        log.info("Fetching product with ID: {}", id);
         return productRepository.findById(id)
             .map(ProductResponse::from)
             .orElseThrow(() -> new ProductNotFoundException(id));
@@ -75,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse findBySku(String sku) {
+        log.info("Fetching product with SKU: {}", sku);
         return productRepository.findBySku(sku)
             .map(ProductResponse::from)
             .orElseThrow(() -> new ProductNotFoundException(sku));
@@ -82,15 +92,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(Long id) {
+        log.info("Deleting product with ID: {}", id);
         if (!productRepository.existsById(id))
             throw new ProductNotFoundException(id);
 
         productRepository.deleteById(id);
+        log.info("Product deleted successfully");
         
     }
 
     @Override
     public ProductResponse update(Long id, ProductRequest request) {
+        log.info("Updating product with ID: {}", id);
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -103,9 +116,9 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(request.price());
         product.setCategory(category);
 
-        return ProductResponse.from(
-            productRepository.save(product)
-        );
+        product = productRepository.save(product);
+        log.info("Product was updated successfully");
+        return ProductResponse.from(product);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package io.github.gabrielhe4.product_service.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private static Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
+
     @Override
     public CategoryResponse createCategory(CategoryRequest request) {
+        log.info("Creating a new category...");
+
         Category newCategory = Category.builder()
                                 .name(request.name())
                                 .description(request.description())
@@ -29,11 +35,15 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(newCategory)
         );
 
+        log.info("A new category was created with ID: {}", response.id());
+
         return response;
     }
 
     @Override
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
+        log.info("Updating existing category ID: {}", id);
+
         Category existingCategory = categoryRepository.findById(id).orElseThrow(
             () -> new CategoryNotFoundException(id));
 
@@ -41,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         existingCategory.setDescription(request.description());
 
         categoryRepository.save(existingCategory);
+        log.info("Category with ID: {} was updated successfully.", id);
 
         return CategoryResponse.from(existingCategory);
 
@@ -48,18 +59,21 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<CategoryResponse> findAll(Pageable pageable) {
+        log.info("Fetching all categories with pagination...");
         Page<Category> categories = categoryRepository.findAll(pageable);
-
+        
         return categories.map(CategoryResponse::from);
 
     }
 
     @Override
     public void deleteCategory(Long id) {
+        log.info("Deleting category with ID: {}", id);
         Category existingCategory = categoryRepository.findById(id).orElseThrow(
             () -> new CategoryNotFoundException(id));
             
         categoryRepository.delete(existingCategory);
+        log.info("Category with ID: {} was deleted successfully.", id);
     }
 
 }
