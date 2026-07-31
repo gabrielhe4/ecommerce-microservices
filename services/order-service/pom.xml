@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.github.gabrielhe4</groupId>
-	<artifactId>order_service</artifactId>
+	<artifactId>order-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
