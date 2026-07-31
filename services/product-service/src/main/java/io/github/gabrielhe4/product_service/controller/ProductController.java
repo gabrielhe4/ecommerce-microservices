@@ -24,11 +24,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
-
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class ProductController {
 
     private final ProductService productService;
@@ -41,7 +38,7 @@ public class ProductController {
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
 
         var response = productService.create(request);
-        
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
@@ -60,7 +57,7 @@ public class ProductController {
 
     @GetMapping("/products/sku/{sku}")
     public ResponseEntity<ProductResponse> getProductBySku(@RequestParam String sku) {
-        
+
         var response = productService.findBySku(sku);
 
         return ResponseEntity.ok(response);
@@ -68,7 +65,7 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
-        
+
         var response = productService.findById(id);
 
         return ResponseEntity.ok(response);
@@ -80,27 +77,27 @@ public class ProductController {
         @RequestBody ProductRequest request
     ) {
         var response = productService.update(id, request);
-        
+
         return ResponseEntity.ok(response);
-        
+
     }
 
     @PutMapping("products/{id}/image")
     public ResponseEntity<ProductResponse> updateProductImage(
-        @PathVariable Long id, 
+        @PathVariable Long id,
         @RequestParam("image") MultipartFile image
     ) throws IOException {
-        
+
         var response = productService.updateImage(id, image);
-        
+
         return ResponseEntity.ok(response);
     }
-    
-    
-    
 
 
-    
+
+
+
+
 
 
 }

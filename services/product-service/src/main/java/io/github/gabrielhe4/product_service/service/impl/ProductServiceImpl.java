@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
                                 .imageUrl("default-image.jpg")
                                 .category(category)
                                 .build();
-        
+
         newProduct = productRepository.save(newProduct);
         log.info("New product was created with ID: {}", newProduct.getId());
         return ProductResponse.from(newProduct);
@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
             page = productRepository.searchByNameContainingIgnoreCase(search, pageable);
 
         if (categoryId != null) {
-            
+
             Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
@@ -98,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.deleteById(id);
         log.info("Product deleted successfully");
-        
+
     }
 
     @Override
@@ -109,11 +109,14 @@ public class ProductServiceImpl implements ProductService {
 
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new CategoryNotFoundException(request.categoryId()));
-        
+
         product.setSku(request.sku());
         product.setName(request.name());
         product.setDescription(request.description());
         product.setPrice(request.price());
+        product.setDiscountStartsAt(request.discountStartsAt());
+        product.setDiscountEndsAt(request.discountEndsAt());
+        product.setDiscountPercentage(request.discountPercentage());
         product.setCategory(category);
 
         product = productRepository.save(product);
@@ -123,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse updateImage(Long id, MultipartFile image) throws IOException {
-        
+
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -132,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(product);
         updatedProduct.setImageUrl(fileName);
-        
+
         return ProductResponse.from(updatedProduct);
     }
 

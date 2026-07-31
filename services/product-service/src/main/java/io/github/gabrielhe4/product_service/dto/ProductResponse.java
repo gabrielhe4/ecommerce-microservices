@@ -10,11 +10,13 @@ public record ProductResponse(
     String sku,
     String name,
     String description,
-    BigDecimal price, 
-    Instant createdAt, 
+    BigDecimal price,
+    Instant createdAt,
     Instant updatedAt,
     String category,
-    String image
+    String image,
+    boolean discountActive,
+    BigDecimal discountPercentage
 ) {
 
     public static ProductResponse from(Product product) {
@@ -27,8 +29,10 @@ public record ProductResponse(
             product.getCreatedAt(),
             product.getUpdatedAt(),
             product.getCategory().getName(),
-            product.getImageUrl()
+            product.getImageUrl(),
+            product.isDiscountActive(),
+            product.getDiscountPercentage()
         );
     }
-    
+
 }
