@@ -16,4 +16,6 @@ public interface CategoryService {
 
     void deleteCategory(Long id);
 
+    CategoryResponse getById(Long id);
+
 }

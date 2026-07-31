@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import io.github.gabrielhe4.product_service.dto.CategoryRequest;
 import io.github.gabrielhe4.product_service.dto.CategoryResponse;
 import io.github.gabrielhe4.product_service.exception.CategoryNotFoundException;
+import io.github.gabrielhe4.product_service.exception.DuplicateResourceException;
 import io.github.gabrielhe4.product_service.model.Category;
 import io.github.gabrielhe4.product_service.repository.CategoryRepository;
 import io.github.gabrielhe4.product_service.service.CategoryService;
@@ -25,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse createCategory(CategoryRequest request) {
         log.info("Creating a new category...");
+
+        if (categoryRepository.existsByName(request.name()))
+            throw new DuplicateResourceException("Category", request.name());
 
         Category newCategory = Category.builder()
                                 .name(request.name())
@@ -61,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Page<CategoryResponse> findAll(Pageable pageable) {
         log.info("Fetching all categories with pagination...");
         Page<Category> categories = categoryRepository.findAll(pageable);
-        
+
         return categories.map(CategoryResponse::from);
 
     }
@@ -69,11 +73,20 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         log.info("Deleting category with ID: {}", id);
+
         Category existingCategory = categoryRepository.findById(id).orElseThrow(
             () -> new CategoryNotFoundException(id));
-            
+
         categoryRepository.delete(existingCategory);
         log.info("Category with ID: {} was deleted successfully.", id);
+    }
+
+    @Override
+    public CategoryResponse getById(Long id) {
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new CategoryNotFoundException(id));
+
+        return CategoryResponse.from(category);
     }
 
 }
