@@ -5,7 +5,7 @@ spring:
   application:
     name: product-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/products
+    url: jdbc:postgresql://localhost:5432/ecommerce_products
     username: dev
     password: dev
   jpa:
