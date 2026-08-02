@@ -5,6 +5,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/ecommerce_orders
     username: dev
     password: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 server:
   port: 8082
