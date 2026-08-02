@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import io.github.gabrielhe4.product_service.dto.CategoryRequest;
 import io.github.gabrielhe4.product_service.dto.CategoryResponse;
 import io.github.gabrielhe4.product_service.exception.CategoryNotFoundException;
+import io.github.gabrielhe4.product_service.exception.ConflictException;
 import io.github.gabrielhe4.product_service.exception.DuplicateResourceException;
 import io.github.gabrielhe4.product_service.model.Category;
 import io.github.gabrielhe4.product_service.repository.CategoryRepository;
+import io.github.gabrielhe4.product_service.repository.ProductRepository;
 import io.github.gabrielhe4.product_service.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     private static Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
@@ -76,6 +79,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category existingCategory = categoryRepository.findById(id).orElseThrow(
             () -> new CategoryNotFoundException(id));
+        
+        if (productRepository.existsByCategory(existingCategory))
+            throw new ConflictException("Cannot delete category with existing products.");
 
         categoryRepository.delete(existingCategory);
         log.info("Category with ID: {} was deleted successfully.", id);
@@ -83,6 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getById(Long id) {
+        log.info("Fetching category with ID: {}", id);
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new CategoryNotFoundException(id));
 

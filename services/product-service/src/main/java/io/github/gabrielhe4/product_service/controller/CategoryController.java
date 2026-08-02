@@ -11,11 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -24,7 +25,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-     @GetMapping("/categories")
+     @GetMapping
      public ResponseEntity<Page<CategoryResponse>> findAll(
         @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
      ) {
@@ -34,6 +35,13 @@ public class CategoryController {
         return ResponseEntity.ok(response);
 
      }
+
+     @GetMapping("/{id}")
+     public ResponseEntity<CategoryResponse> getById(@PathVariable Long id) {
+        var response = categoryService.getById(id);
+        return ResponseEntity.ok(response);
+     }
+     
 
 
 }
