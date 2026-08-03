@@ -17,4 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findByCategory(Category category, Pageable pageable);
 
+    boolean existsByCategory(Category category);
+
 }

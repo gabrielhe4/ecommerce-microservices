@@ -36,7 +36,7 @@ public class Category {
     private String name;
 
     @Setter
-    @Column(length = 50)
+    @Column(length = 500)
     private String description;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
