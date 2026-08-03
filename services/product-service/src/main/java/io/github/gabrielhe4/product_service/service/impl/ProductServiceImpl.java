@@ -44,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
                                 .description(request.description())
                                 .price(request.price())
                                 .imageUrl("default-image.jpg")
+                                .discountPercentage(request.discountPercentage())
                                 .category(category)
                                 .build();
 
