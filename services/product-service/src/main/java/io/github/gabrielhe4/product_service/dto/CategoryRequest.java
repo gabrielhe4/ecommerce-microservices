@@ -5,10 +5,10 @@ import jakarta.validation.constraints.Size;
 
 public record CategoryRequest (
     @NotNull(message = "Name is required")
-    @Size(min = 3, max = 20, message = "Name must be between 3 and 20 characters")
+    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     String name,
 
-    @Size(max = 500, message = "Description must not exceed 50 characters")
+    @Size(max = 500, message = "Description must not exceed 500 characters")
     String description
 ){
 

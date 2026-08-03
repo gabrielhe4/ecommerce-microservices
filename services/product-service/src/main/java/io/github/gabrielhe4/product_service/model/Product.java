@@ -67,9 +67,10 @@ public class Product {
     @Setter
     private String imageUrl;
 
+    @Builder.Default
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
 
     @LastModifiedDate
     private Instant updatedAt;

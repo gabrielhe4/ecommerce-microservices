@@ -5,17 +5,17 @@ spring:
   application:
     name: product-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/products
+    url: jdbc:postgresql://localhost:5432/ecommerce_products
     username: dev
     password: dev
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
   flyway:
-    enabled: true
+    enabled: false
 
 management:
   endpoints:
