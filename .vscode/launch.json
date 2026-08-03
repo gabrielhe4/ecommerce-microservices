@@ -8,6 +8,17 @@
             "mainClass": "io.github.gabrielhe4.product_service.ProductServiceApplication",
             "projectName": "product-service",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=45641 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=product-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-OrderServiceApplication<order-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "io.github.gabrielhe4.order_service.OrderServiceApplication",
+            "projectName": "order-service",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]

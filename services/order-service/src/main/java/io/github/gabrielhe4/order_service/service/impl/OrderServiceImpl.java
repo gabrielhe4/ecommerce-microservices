@@ -44,7 +44,6 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItemRequest itemReq: request.items()) {
             ProductDto product = productClient.getProduct(itemReq.productId());
 
-
             OrderItem item = OrderItem.builder()
                                 .productId(product.id())
                                 .productName(product.name())
