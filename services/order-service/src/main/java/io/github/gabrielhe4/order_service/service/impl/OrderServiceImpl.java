@@ -13,24 +13,25 @@ import io.github.gabrielhe4.order_service.dto.CreateOrderRequest;
 import io.github.gabrielhe4.order_service.dto.OrderItemRequest;
 import io.github.gabrielhe4.order_service.dto.OrderResponse;
 import io.github.gabrielhe4.order_service.dto.ProductDto;
+import io.github.gabrielhe4.order_service.event.OrderPlacedEvent;
 import io.github.gabrielhe4.order_service.exception.ResourceNotFoundException;
+import io.github.gabrielhe4.order_service.messaging.OrderEventPublisher;
 import io.github.gabrielhe4.order_service.model.Order;
 import io.github.gabrielhe4.order_service.model.OrderItem;
 import io.github.gabrielhe4.order_service.repository.OrderRepository;
 import io.github.gabrielhe4.order_service.service.OrderService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductClient productClient;
+    private final OrderEventPublisher eventPublisher;
 
     private static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    public OrderServiceImpl(OrderRepository orderRepository, ProductClient productClient) {
-        this.orderRepository = orderRepository;
-        this.productClient = productClient;
-    }
 
     @Override
     @Transactional
@@ -60,6 +61,16 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
         log.info("A new order was created with id: {}", savedOrder.getId());
+
+        log.info("Publishing an order placed event to inventory service...");
+        OrderPlacedEvent event = new OrderPlacedEvent(
+            savedOrder.getId(),
+            savedOrder.getItems().stream()
+                .map(i -> new OrderPlacedEvent.Line(i.getProductId(),
+                        i.getQuantity()))
+                .toList()
+        );
+        eventPublisher.publishOrderPlacedEvent(event);
 
         return toResponse(savedOrder);
     }

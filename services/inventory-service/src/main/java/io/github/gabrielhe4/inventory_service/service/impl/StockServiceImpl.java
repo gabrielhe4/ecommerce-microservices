@@ -25,7 +25,7 @@ public class StockServiceImpl implements StockService {
     @Override
     @Transactional
     public void decrement(Long productId, Integer quantity) {
-        log.info("Decrementing stock for product ID: {} - {}", productId, quantity);
+        log.info("Decrementing stock for product ID: {} by {}", productId, quantity);
         Stock stock = stockRepository
             .findById(productId)
             .orElseGet(() -> new Stock(productId, quantity));
