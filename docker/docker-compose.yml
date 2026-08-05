@@ -1,5 +1,23 @@
   
 services:
+  inventory-service:
+    build: ../services/inventory-service
+    container_name: inventory-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce_inventory
+      SPRING_DATASOURCE_USERNAME: dev
+      SPRING_DATASOURCE_PASSWORD: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: dev
+      SPRING_RABBITMQ_PASSWORD: dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
