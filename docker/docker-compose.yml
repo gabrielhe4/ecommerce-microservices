@@ -1,3 +1,4 @@
+  
 services:
   postgres:
     image: postgres:16
@@ -16,6 +17,42 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    user: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: dev
+      RABBITMQ_DEFAULT_PASS: dev
+    tmpfs:
+      - /var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  inventory-service:
+    build: ../services/inventory-service
+    container_name: inventory-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce_inventory
+      SPRING_DATASOURCE_USERNAME: dev
+      SPRING_DATASOURCE_PASSWORD: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: dev
+      SPRING_RABBITMQ_PASSWORD: dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   product-service:
     build: ../services/product-service
@@ -40,6 +77,10 @@ services:
       SPRING_DATASOURCE_USERNAME: dev
       SPRING_DATASOURCE_PASSWORD: dev
       SERVICES_PRODUCT_URL: http://product-service:8081
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: dev
+      SPRING_RABBITMQ_PASSWORD: dev
     depends_on:
       postgres:
         condition: service_healthy
@@ -54,9 +95,13 @@ services:
     environment:
       SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://product-service:8081
       SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://order-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://inventory-service:8083
     depends_on:
       - product-service
       - order-service
+      - inventory-service
 
 volumes:
   pgdata:
+
+

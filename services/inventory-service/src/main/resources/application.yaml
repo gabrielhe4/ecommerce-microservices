@@ -1,8 +1,8 @@
 spring:
   application:
-    name: order_service
+    name: inventory-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/ecommerce_orders
+    url: jdbc:postgresql://localhost:5432/ecommerce_inventory
     username: dev
     password: dev
   jpa:
@@ -15,14 +15,10 @@ spring:
     password: dev
 
 server:
-  port: 8082
-
-services:
-  product:
-    url:  http://localhost:8081
+  port: 8083
 
 management:
   endpoints:
     web:
       exposure:
-        include:  health, info, metrics
+        include: health, info, metrics
