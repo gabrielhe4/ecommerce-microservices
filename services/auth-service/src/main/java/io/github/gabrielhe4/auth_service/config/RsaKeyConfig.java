@@ -7,6 +7,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
@@ -16,6 +17,7 @@ public class RsaKeyConfig {
     @Value("classpath:keys/private_pkcs8.pem")
     private Resource privateKeyResource;
 
+    @Bean
     PrivateKey privateKey() throws Exception {
         String pem = new String(
             privateKeyResource.getInputStream().readAllBytes(), 
