@@ -35,11 +35,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse create(CreateOrderRequest request) {
+    public OrderResponse create(CreateOrderRequest request, Long userId) {
         log.info("Creating a new order...");
 
         Order order = new Order();
-        order.setUserId(request.userId());
+        order.setUserId(userId);
         BigDecimal total = BigDecimal.ZERO;
 
         for (OrderItemRequest itemReq: request.items()) {

@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,8 +32,10 @@ public class OrderController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponse create(@Valid @RequestBody CreateOrderRequest request) {
-        var response = orderService.create(request);
+    public OrderResponse create(
+        @RequestHeader("X-User-Id") Long userId,
+        @Valid @RequestBody CreateOrderRequest request) {
+        var response = orderService.create(request, userId);
         return response;
     }
 
@@ -43,7 +46,7 @@ public class OrderController {
     }
 
     @GetMapping()
-    public List<OrderResponse> getByUser(@RequestParam Long userId) {
+    public List<OrderResponse> getByUser(@RequestHeader("X-User-Id") Long userId) {
         var response = orderService.findByUser(userId);
         return response;
     }

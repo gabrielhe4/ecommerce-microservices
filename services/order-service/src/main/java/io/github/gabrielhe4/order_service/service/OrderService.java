@@ -7,7 +7,7 @@ import io.github.gabrielhe4.order_service.dto.OrderResponse;
 
 public interface OrderService {
 
-    OrderResponse create(CreateOrderRequest request);
+    OrderResponse create(CreateOrderRequest request, Long userId);
 
     OrderResponse findById(Long id);
 
