@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: order_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_orders
+    username: dev
+    password: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: dev
+    password: dev
+
+server:
+  port: 8082
+
+services:
+  product:
+    url:  http://localhost:8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:  health, info, metrics

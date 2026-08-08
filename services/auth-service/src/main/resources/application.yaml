@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_auth
+    username: dev
+    password: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8084
+
+jwt:
+  access-token-expiry-ms: 900000   # 15 minutes
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
