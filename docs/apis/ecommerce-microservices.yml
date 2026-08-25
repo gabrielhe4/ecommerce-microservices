@@ -1,0 +1,447 @@
+opencollection: 1.0.0
+info:
+  name: ecommerce-microservices
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+items:
+  - info:
+      name: auth-service
+      type: folder
+      seq: 4
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Login
+          type: http
+          seq: 2
+        http:
+          method: POST
+          url: http://localhost:8080/auth/login
+          body:
+            type: json
+            data: |-
+              {
+                "username": "alice",
+                "password": "secret123"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+      - info:
+          name: Logout
+          type: http
+          seq: 4
+        http:
+          method: POST
+          url: http://localhost:8080/auth/logout
+          body:
+            type: json
+            data: |-
+              {
+                "refreshToken": ""
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: false
+      - info:
+          name: Refresh
+          type: http
+          seq: 3
+        http:
+          method: POST
+          url: http://localhost:8080/auth/refresh
+          body:
+            type: json
+            data: |-
+              {
+                "refreshToken": ""
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: false
+      - info:
+          name: Register
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: http://localhost:8080/auth/register
+          body:
+            type: json
+            data: |-
+              {
+                "username": "alice",
+                "password": "secret123"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+  - info:
+      name: inventory-service
+      type: folder
+      seq: 3
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Get stock by product
+          type: http
+          seq: 3
+        http:
+          method: GET
+          url: http://localhost:8083/api/stock
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+      - info:
+          name: Get stock
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: http://localhost:8083/api/stock
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+      - info:
+          name: Set stock
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: http://localhost:8083/api/admin/stock
+          body:
+            type: json
+            data: |-
+              {
+                "productId": 1,
+                "quantity": 15
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+  - info:
+      name: order-service
+      type: folder
+      seq: 2
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Create order
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: http://localhost:8082/api/orders
+          body:
+            type: json
+            data: |-
+              {
+                "userId": 1,
+                "items": [
+                  {
+                    "productId": 4,
+                    "quantity": 1
+                  }
+                ]
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+          forwardAuthorizationHeader: true
+  - info:
+      name: product-service
+      type: folder
+      seq: 1
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: product
+          type: folder
+          seq: 2
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: admin
+              type: folder
+              seq: 2
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: Create product
+                  type: http
+                  seq: 1
+                http:
+                  method: POST
+                  url: http://localhost:8080/api/admin/products
+                  body:
+                    type: json
+                    data: |2-
+                       {
+                        "sku": "ELEC-1001",
+                        "name": "Wireless Bluetooth Headphones",
+                        "description": "Over-ear headphones with active noise cancellation and 30-hour battery life.",
+                        "price": 49.99,
+                         "discountPercentage": 10,
+                         "discountStartsAt": "2026-08-01T15:30:00",
+                         "discountEndsAt": "2026-08-09T20:30:00",
+                         "categoryId": 1
+                      }
+                  auth:
+                    type: bearer
+                    token: eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhbGljZSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4NjEyNTIwNywiZXhwIjoxNzg2MTI2MTA3fQ.o7ndxCKSoZ4JoQZnVVHKXwEMjmilNmA31HTereZB1nMaNfMvFeINzqevpkJcJFXtaSP4DecUtp5LJonrlhcAvbUY2rkRLaPgMBKMNaAkTwo6YSgm6sKUoSdhO8WFXxQcfn85GwpMhEXbbVoQ5adMJNums-ZJfTRN8WY2VFZI4FGUsxSBPMxTeChRaZUhEK3zED93cVWfJ34tq2JcMK1ERqiVQ2Fmgikyx8XT46BJJjk_Krs-xRkiC33urEfDVLqBqp9rhKg9lKXRJMtVqJCFhozB5IYbLr4UBo0f0NWNDdfNZy1TCqi8oYhCsqAm5OU1fcwNU_EUEccyMLIbSiiOcw
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Delete product
+                  type: http
+                  seq: 3
+                http:
+                  method: DELETE
+                  url: http://localhost:8081/api/admin/products/3
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Update product
+                  type: http
+                  seq: 2
+                http:
+                  method: PUT
+                  url: http://localhost:8081/api/admin/products/3
+                  body:
+                    type: json
+                    data: |2-
+                       {
+                        "sku": "ELEC-1001",
+                        "name": "Wireless Bluetooth Headphones Modified",
+                        "description": "Over-ear headphones with active noise cancellation and 30-hour battery life.",
+                        "price": 49.99,
+                         "discountPercentage": 10,
+                         "discountStartsAt": "2026-08-01T15:30:00",
+                         "discountEndsAt": "2026-08-09T20:30:00",
+                         "categoryId": 1
+                      }
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+          - info:
+              name: public
+              type: folder
+              seq: 1
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: Get all products
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8081/api/products
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Get by Id
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8081/api/products/3
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+      - info:
+          name: category
+          type: folder
+          seq: 1
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: admin
+              type: folder
+              seq: 2
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: Create category
+                  type: http
+                  seq: 1
+                http:
+                  method: POST
+                  url: http://localhost:8081/api/admin/categories
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "name": "Electronics",
+                        "description": "Devices, gadgets, and electronic accessories for everyday use."
+                      }
+                  auth:
+                    type: bearer
+                    token: eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhbGljZSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4NjEyNTIwNywiZXhwIjoxNzg2MTI2MTA3fQ.o7ndxCKSoZ4JoQZnVVHKXwEMjmilNmA31HTereZB1nMaNfMvFeINzqevpkJcJFXtaSP4DecUtp5LJonrlhcAvbUY2rkRLaPgMBKMNaAkTwo6YSgm6sKUoSdhO8WFXxQcfn85GwpMhEXbbVoQ5adMJNums-ZJfTRN8WY2VFZI4FGUsxSBPMxTeChRaZUhEK3zED93cVWfJ34tq2JcMK1ERqiVQ2Fmgikyx8XT46BJJjk_Krs-xRkiC33urEfDVLqBqp9rhKg9lKXRJMtVqJCFhozB5IYbLr4UBo0f0NWNDdfNZy1TCqi8oYhCsqAm5OU1fcwNU_EUEccyMLIbSiiOcw
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Delete category
+                  type: http
+                  seq: 1
+                http:
+                  method: DELETE
+                  url: http://localhost:8081/api/admin/categories/3
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Update category
+                  type: http
+                  seq: 1
+                http:
+                  method: PUT
+                  url: http://localhost:8081/api/admin/categories/16
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "name" : "Others new edit 2"
+                        "description" : "Not categorized yet... modified"
+                      }
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+          - info:
+              name: public
+              type: folder
+              seq: 1
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: Get by id
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8081/api/categories/1
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+              - info:
+                  name: Get categories
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/categories
+                  params:
+                    - name: size
+                      value: '15'
+                      type: query
+                      disabled: true
+                    - name: page
+                      value: '0'
+                      type: query
+                      disabled: true
+                    - name: sort
+                      value: name
+                      type: query
+                      disabled: true
+                  auth: inherit
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+                  forwardAuthorizationHeader: true
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-08-25T19:39:56.772Z'
+    exportedUsing: Bruno
